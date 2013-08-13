@@ -6,39 +6,36 @@
  * @author danieleliasson Stilero AB - http://www.stilero.com
  * @copyright 2011-dec-31 Stilero AB
  * @license	GPLv2
+ * 
+ * Joomla! is free software. This version may have been modified pursuant
+ * to the GNU General Public License, and as distributed it includes or
+ * is derivative of works licensed under the GNU General Public License or
+ * other free or open source software licenses.
+ * 
+ * This file is part of TwitterTweet
+ * 
+ * TwitterTweet is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or 
+ * (at your option) any later version.
+ * 
+ * TwitterTweet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with TwitterTweet.  
+ * If not, see <http://www.gnu.org/licenses/>.
  */
 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
-define('TT_LIBRARY', dirname(__FILE__).DS.'library'.DS);
-define('TT_HELPERS', dirname(__FILE__).DS.'helpers'.DS);
 
 // Import library dependencies
 jimport('joomla.plugin.plugin');
-JHTML::addIncludePath(TT_HELPERS);
-JLoader::register('StileroTTOauthClient', TT_LIBRARY.'oauth-client.php');
-JLoader::register('StileroTTOauthUser', TT_LIBRARY.'oauth-user.php');
-JLoader::register('StileroTTOauthCommunicator', TT_LIBRARY.'oauth-communicator.php');
-JLoader::register('StileroTTOauthServer', TT_LIBRARY.'oauth-server.php');
-JLoader::register('StileroTTTweets', TT_LIBRARY.'twitter-tweets.php');
-JLoader::register('StileroTTJArticle', TT_LIBRARY.'stileroTTJArticle.php');
 
 class plgSystemTwittertweet extends JPlugin {
-    protected $_OauthClient;
-    protected $_OauthUser;
-    protected $_Tweet;
-    protected $_Article;
-    protected $_ShareCheck;
-    protected $_Table;
-    protected $_minutesBetweenPosts;
-    protected $_dateLimit;
-    protected $_catList;
-    protected $_allwaysPostOnSave;
-    protected $_defaultTag;
-    
-    const TABLE_NAME = '#__twittertweet_tweeted';
-
-
     var $k2Item;
     var $config;
     var $twitterFormToken;
@@ -56,84 +53,33 @@ class plgSystemTwittertweet extends JPlugin {
         $language = JFactory::getLanguage();
         $language->load('plg_system_twittertweet', JPATH_ADMINISTRATOR, 'en-GB', true);
         $language->load('plg_system_twittertweet', JPATH_ADMINISTRATOR, null, true);
-        $this->_minutesBetweenPosts = $this->params->def('delay');
-        $this->_dateLimit = $this->params->def('items_newer_than');
-        $this->_catList = $this->params->def('section_id');
-        $this->_allwaysPostOnSave = $this->params->def('post_on_save');
-        $this->_defaultTag = $this->params->def('default_hash');
-        
         $this->errorOccured = FALSE;
-//        
-//        
-//        
-//        $this->config = array(
-//            'shareLogTableName'     =>      '#__twittertweet_tweeted',
-//            'twitterUsername'       =>      $this->params->def('username'),
-//            'twitterPassword'       =>      $this->params->def('password'),
-//            'oauthConsumerKey'      =>      $this->params->def('oauth_consumer_key'),
-//            'oauthConsumerSecret'   =>      $this->params->def('oauth_consumer_secret'),
-//            'oauthUserKey'          =>      $this->params->def('oauth_user_key'),
-//            'oauthUserSecret'       =>      $this->params->def('oauth_user_secret'),
-//            'twitterMaxHashTags'    =>      3,
-//            'useOauth'              =>      $this->params->def('oauth_enabled'),
-//            'twControllerClassName' =>      'stlTweetControllerClass',
-//            'categoriesToShare'     =>      $this->params->def('section_id'),
-//            'shareDelay'            =>      $this->params->def('delay'),
-//            'articlesNewerThan'     =>      $this->params->def('items_newer_than'),
-//            'useMetaAsHashTag'      =>      $this->params->def('metahash'),
-//            'defaultHashTag'        =>      $this->params->def('default_hash'),
-//            'postOnSave'            =>      $this->params->def('post_on_save')
-//        ); 
+        $this->config = array(
+            'shareLogTableName'     =>      '#__twittertweet_tweeted',
+            'twitterUsername'       =>      $this->params->def('username'),
+            'twitterPassword'       =>      $this->params->def('password'),
+            'oauthConsumerKey'      =>      $this->params->def('oauth_consumer_key'),
+            'oauthConsumerSecret'   =>      $this->params->def('oauth_consumer_secret'),
+            'oauthUserKey'          =>      $this->params->def('oauth_user_key'),
+            'oauthUserSecret'       =>      $this->params->def('oauth_user_secret'),
+            'twitterMaxHashTags'    =>      3,
+            'useOauth'              =>      $this->params->def('oauth_enabled'),
+            'twControllerClassName' =>      'stlTweetControllerClass',
+            'categoriesToShare'     =>      $this->params->def('section_id'),
+            'shareDelay'            =>      $this->params->def('delay'),
+            'articlesNewerThan'     =>      $this->params->def('items_newer_than'),
+            'useMetaAsHashTag'      =>      $this->params->def('metahash'),
+            'defaultHashTag'        =>      $this->params->def('default_hash'),
+            'postOnSave'            =>      $this->params->def('post_on_save')
+        ); 
     }
-    
-    /**
-     * Initializes all oauth classes for the plugin
-     */
-    protected function _initializeClasses(){
-        $oauthClientKey = $this->params->def('oauth_consumer_key');
-        $oauthClientSecret = $this->params->def('oauth_consumer_secret');
-        $accessToken = $this->params->def('oauth_user_key');
-        $tokenSecret = $this->params->def('oauth_user_secret');
-        $this->_OauthClient = new StileroTTOauthClient($oauthClientKey, $oauthClientSecret);
-        $this->_OauthUser = new StileroTTOauthUser($accessToken, $tokenSecret);
-        $this->_Tweet = new StileroTTTweets($this->_OauthClient, $this->_OauthUser);
-        $this->_Table = new StileroTTShareTable(self::TABLE_NAME);
-    }
-    
-    /**
-     * Initializes all before posting
-     * @param boolean $inBackend True if posted from backend
-     * @param Object $article Joomla article Object
-     */
-    protected function _initializePosting($inBackend, $article){
-        $this->_initializeClasses();
-        $this->_Article = new StileroTTJArticle($article);
-        $this->_ShareCheck = new StileroTTShareCheck($this->_Article->getArticleObj(), $this->_Table, $this->_minutesBetweenPosts, $this->_dateLimit, $this->_catList, $this->_allwaysPostOnSave, $inBackend);
-        
-    }
-    
-//    protected function _initialChecks(){
-//        if(!StileroTTServerRequirementHelper::hasCurlSupport()) throw new Exception('Server Missing Curl support.'); 
-//        if(!StileroTTServerRequirementHelper::hasFileGetSupport()) throw new Exception('Server Missing Support for file_get_contents');
-//        if(!$this->_Table->isTableFound()){
-//            $this->_Table->createTable();
-//        }
-//        if($this->_Table->isTooEarly($this->_minutesBetweenPosts)) throw new Exception('Sharing too early');
-//        $this->_Article->isPublished;
-//        $this->_Article->isPublic;
-//    }
-    
+
     public function onContentAfterSave($context, &$article, $isNew) {
-        $this->_initializePosting(true, $article);
-        if($this->_ShareCheck->hasFullChecksPassed()){
-            $message = StileroTTTweetHelper::buildTweet($this->_Article->getArticleObj(), 5, $this->_defaultTag);
-            $this->_Tweet->update($message);
-        }
-        
-        //$this->setupClasses();
-        //$articleObject = $this->getArticleObjectFromJoomlaArticle($article);
-        //$this->CheckClass->setArticleObject($articleObject);
-        //$this->sendTweet();
+        $this->inBackend = true;
+        $this->setupClasses();
+        $articleObject = $this->getArticleObjectFromJoomlaArticle($article);
+        $this->CheckClass->setArticleObject($articleObject);
+        $this->sendTweet();
         return;
     }
 

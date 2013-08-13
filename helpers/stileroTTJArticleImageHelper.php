@@ -1,0 +1,117 @@
+<?php
+/**
+ * Image Helper Class for JArticle. 
+ *
+ * @version  1.0
+ * @package Stilero
+ * @subpackage plg_twittertweet
+ * @author Daniel Eliasson <daniel at stilero.com>
+ * @copyright  (C) 2013-aug-12 Stilero Webdesign (http://www.stilero.com)
+ * @license	GNU General Public License version 2 or later.
+ * @link http://www.stilero.com
+ */
+
+// no direct access
+defined('_JEXEC') or die('Restricted access'); 
+
+class StileroTTJArticleImageHelper{
+    
+    const IMAGE_TYPE_FULL = 'full';
+    const IMAGE_TYPE_INTRO = 'intro';
+    
+    /**
+     * Extracts images from the article image object
+     * @param string $imageJSON JSON consisting of images
+     * @return string image src
+     */
+    public static function articleImages($imageJSON){
+        $obj = json_decode($imageJSON);
+        $introImage = ( isset( $obj->{'image_intro'} ) ) ? $obj->{'image_intro'} : '' ;
+        $fullImage = ( isset ($obj->{'image_fulltext'}) )? $obj->{'image_fulltext'} : '';
+        $images = array(
+            'intro' => $introImage,
+            'full'  => $fullImage
+        );
+        return $images;
+    }
+    
+    /**
+     * Extracts and returns an image from the text
+     * @param Object $Article
+     * @param string $type the text type, for example 'full' or 'intro'. Use constants.
+     * @return string image src url
+     */
+    public static function imageFromTextType($Article, $type='full'){
+        $images = (isset($Article->images)) ? self::articleImages($Article->images) : '';
+        $textImage = (isset($images[$type])) ? $images[$type] : '';
+        if($textImage != ""){
+            $textImage = preg_match('/http/', $textImage)? $textImage : JURI::root().$textImage;
+        }
+        return $textImage;
+    }
+    
+    public static function content($Article){
+        $content = $Article->text;
+        $content = $content == '' ? $Article->fulltext : $content;
+        $content = $content == '' ? $Article->introtext : $content;
+        return $content;
+    }
+    
+    /**
+     * Extracts images from the content and returns them as an array
+     * @param Object $article
+     * @return array images
+     */
+    public static function imagesInContent($Article){
+        $content = self::content($Article);
+        if( ($content == '') || (!class_exists('DOMDocument')) ){
+            return;
+        }
+        $html = new DOMDocument();
+        $html->recover = true;
+        $html->strictErrorChecking = false;
+        $html->loadHTML($content);
+        $images = array();
+        foreach($html->getElementsByTagName('img') as $image) {
+            $images[] = array(
+                'src' => $image->getAttribute('src'),
+                'class' => $image->getAttribute('class'),
+            );
+        }
+        return $images;
+    }
+    
+    /**
+     * Finds the first image in the content
+     * @param Object $article
+     * @return string First image in content
+     */
+    public static function firstImageInContent($Article){
+        $content = self::content($Article);
+        if( $content == ''){
+            return;
+        }
+        $images = self::imagesInContent($Article);
+        $image = (isset($images[0]['src'])) ? $images[0]['src'] : '';
+        if($image != ""){
+            $image = preg_match('/http/', $image)? $image : JURI::root().$image;
+        }
+        return $image;
+    }
+    
+    /**
+     * Returns an article image for the current article.
+     * @param Object $Article
+     * @return string image src url
+     */
+    public static function image($Article){
+        $image = self::imageFromTextType($Article, self::IMAGE_TYPE_INTRO);
+        if ($image == '' ){
+            $image = self::imageFromTextType($Article, self::IMAGE_TYPE_FULL);
+        }
+        if ($image == '' ){
+            $image = self::firstImageInContent($Article);
+        }
+        return $image;
+    }
+}

@@ -160,15 +160,18 @@ class StileroTTJArticle {
      * @return string Article Description
      */
     public function description($article){
-        $descText = $article->text!="" ? $article->text : '';
-        $description = $article->text!="" ? $article->text : '';
+        $descText = '';
+        if(isset($article->text)){
+            $descText = $article->text;
+        }
+        //$description = $article->text!="" ? $article->text : '';
         if(isset($article->introtext) && $article->introtext!=""){
             $descText = $article->introtext;
         }elseif (isset($article->metadesc) && $article->metadesc!="" ) {
             $descText = $article->metadesc;
         }
         $descNeedles = array("\n", "\r", "\"", "'");
-        str_replace($descNeedles, " ", $description );
+        str_replace($descNeedles, " ", $descText );
         $description = substr(htmlspecialchars( strip_tags($descText), ENT_COMPAT, 'UTF-8'), 0, 250);
         return $description;
     }
@@ -254,17 +257,17 @@ class StileroTTJArticle {
      * @param Object $article
      * @return string SEF URL
      */
-//    public function url($article){
-//        $articleSlug = StileroTTArticleHelper::slugFromId($article->id);
-//        $categorySlug = StileroTTCategoryHelper::slugFromId($article->catid);
-//        $hasSH404SEF = StileroTTExtensionHelper::isInstalled('com_sh404sef');
-//        if($hasSH404SEF){
-//            $url = StileroTTSH404SEFUrlHelper::sefURL($articleSlug, $categorySlug);
-//        }else{
-//            $url = StileroTTUrlHelper::sefURL($articleSlug, $categorySlug);
-//        }
-//        return $url;
-//    }
+    public function url($article){
+        $articleSlug = StileroTTArticleHelper::slugFromId($article->id);
+        $categorySlug = StileroTTCategoryHelper::slugFromId($article->catid);
+        $hasSH404SEF = StileroTTExtensionHelper::isInstalled('com_sh404sef');
+        if($hasSH404SEF){
+            $url = StileroTTSH404SEFUrlHelper::sefURL($articleSlug, $categorySlug);
+        }else{
+            $url = StileroTTUrlHelper::sefURL($articleSlug, $categorySlug);
+        }
+        return $url;
+    }
 //    
 //    private function articleSlug($article){
 //        $slug = $article->id.':'.$this->articleAlias($article);

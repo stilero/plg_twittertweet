@@ -18,12 +18,12 @@ class StileroTTTweetHelper{
     
     /**
      * Builds and returns a tweet by combining title, hashtags and url
-     * @param StileroTTJArticle $Article Article Object
+     * @param Object $Article Article Object returned from JArticle Class
      * @param int $numTags Number of tags to use
      * @param string $defaultTag A default tag to use
      * @return string Full Tweet
      */
-    public static function buildTweet(StileroTTJArticle $Article, $numTags=5, $defaultTag=''){
+    public static function buildTweet($Article, $numTags=5, $defaultTag=''){
         $title = $Article->title;
         $hashtagString = StileroTTTagsHelper::hashTagString($Article->tags, $numTags, $defaultTag);
         $articleSlug = StileroTTArticleHelper::slugFromId($Article->id);
@@ -33,7 +33,7 @@ class StileroTTTweetHelper{
         }else{
             $url = StileroTTUrlHelper::sefURL($articleSlug, $categorySlug);
         }
-        $tinyUrl = StileroTTTinyUrl::tinyUrl($url);
+        $tinyUrl = StileroTTTinyUrlHelper::tinyUrl($url);
         $tweet = $title.' '.$tinyUrl.' '.$hashtagString;
         return $tweet;
     }

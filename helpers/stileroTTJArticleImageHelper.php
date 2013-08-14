@@ -51,9 +51,16 @@ class StileroTTJArticleImageHelper{
     }
     
     public static function content($Article){
-        $content = $Article->text;
-        $content = $content == '' ? $Article->fulltext : $content;
-        $content = $content == '' ? $Article->introtext : $content;
+        $content = '';
+        if(isset($Article->text)){
+            $content = $Article->text;
+        }
+        if( isset($Article->fulltext) && ($Article->fulltext != '') ){
+            $content = $Article->fulltext;
+        }
+        if( isset($Article->introtext) && ($Article->introtext != '') ){
+            $content = $Article->introtext;
+        }
         return $content;
     }
     

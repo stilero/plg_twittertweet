@@ -14,7 +14,7 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access'); 
 
-class StileroTTTinyUrl{
+class StileroTTTinyUrlHelper{
     
     const API_URL_TINY_URL = 'http://tinyurl.com/api-create.php?url=';
     const HTTP_STATUS_OK = 200;

@@ -43,7 +43,7 @@ class OauthHelper {
      */
     public static function safeEncode($data) {
         if (is_array($data)) {
-            return array_map('self::safeEncode', $data);
+            return array_map(array('self', 'safeEncode'), $data);
         } else if (is_scalar($data)) {
             return str_ireplace( array('+', '%7E'), array(' ', '~'), rawurlencode($data) );
         } else {
@@ -58,7 +58,7 @@ class OauthHelper {
      */
     public static function safeDecode($data) {
         if (is_array($data)) {
-            return array_map('self::safeDecode', $data);
+            return array_map(array('self', 'safeDecode'), $data);
         } else if (is_scalar($data)) {
             return rawurldecode($data);
         } else {

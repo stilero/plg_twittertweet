@@ -26,7 +26,7 @@ class StileroTTShareCheck{
     
     /**
      * Class for checking before posts
-     * @param StileroTTJArticle $Article Article object
+     * @param Object $Article Article object returned from the JArticle class
      * @param StileroTTShareTable $Table Table object
      * @param int $minBetweenPosts Minutes between posts
      * @param date $dateLimit A date to only post newer than this date, for example 2013-08-13.
@@ -34,7 +34,7 @@ class StileroTTShareCheck{
      * @param boolean $isOverridingDelayCheck Set this to allways post on save
      * @param boolean $isBackend True if called from backend
      */
-    public function __construct(StileroTTJArticle $Article, StileroTTShareTable $Table, $minBetweenPosts=5, $dateLimit='', $catList='', $isOverridingDelayCheck=false, $isBackend=true) {
+    public function __construct($Article, StileroTTShareTable $Table, $minBetweenPosts=5, $dateLimit='', $catList='', $isOverridingDelayCheck=false, $isBackend=true) {
         $this->_Article = $Article;
         $this->_Table = $Table;
         $this->_minBetweenPosts = $minBetweenPosts;
@@ -104,7 +104,7 @@ class StileroTTShareCheck{
             $this->_Table->createTable();
         }
         if( (!$this->_isOverridingDelayCheck) || (!$this->_isBackend) ){
-            if( $this->_Table->isTooEarly($this->_minutesBetweenPosts) ) {
+            if( $this->_Table->isTooEarly($this->_minBetweenPosts) ) {
                 throw new Exception('Sharing too early');
                 $isSuccessful = false;
             }

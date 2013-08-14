@@ -23,7 +23,7 @@ class StileroTTTagsHelper{
      */
     public static function tags($commaSepStringOfTags){
         if($commaSepStringOfTags == ""){
-            break;
+            return;
         }
        $tags = explode(",", $commaSepStringOfTags);
        foreach ($tags as $value) {
@@ -40,6 +40,7 @@ class StileroTTTagsHelper{
      * @return string hashtag string
      */
     public static function hashTagString($tags, $numTags = 5, $defaultTag=""){
+        $hashTagString = '';
         $hasDefaultTag = $defaultTag != '' ? TRUE : FALSE;
         if($hasDefaultTag){
             $sanitizedDefaultTag = str_replace('#', '', $defaultTag);
@@ -49,13 +50,16 @@ class StileroTTTagsHelper{
                 array_unshift($tags, $sanitizedDefaultTag);
             }
         }
-        $i = 0;
-        foreach ($tags as $value) {
-            if($i++ < $numTags ){
-                $trimmedTags[] = trim($value);
+        if(is_array($tags) || !empty($tags)){
+            $i = 0;
+            foreach ($tags as $value) {
+                if($i++ < $numTags ){
+                    $trimmedTags[] = trim($value);
+                }
             }
+            $hashTagString = " #".implode(" #", $trimmedTags);
         }
-        $hashTagString = " #".implode(" #", $trimmedTags);      
+              
         return $hashTagString;
     }
 }

@@ -125,7 +125,7 @@ class StileroTTShareTable{
         $query = $db->getQuery(true);
         $query->select('id');
         $query->from($this->_table);
-        $query->where("date > SUBTIME(".$date->toMySQL()."','0 0:".$minutesBetweenPosts.":0.0')");
+        $query->where("date > SUBTIME('".$date->toMySQL()."','0 0:".$minutesBetweenPosts.":0.0')");
         $db->setQuery($query);
         $result = $db->loadObject();
         if($result){

@@ -6,8 +6,8 @@
  * @version  1.0
  * @package Stilero
  * @subpackage plg_twittertweet
- * @author danieleliasson
- * @copyright  (C) 2013-aug-12 Expression company is undefined on line 9, column 30 in Templates/Joomla/name.php.
+ * @author Daniel Eliasson <daniel at stilero.com>
+ * @copyright  (C) 2013-aug-12 Stilero Webdesign (http://www.stilero.com)
  * @license	GNU General Public License version 2 or later.
  * @link http://www.stilero.com
  */

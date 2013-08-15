@@ -81,11 +81,11 @@ class StileroTTShareCheck{
     public function hasFullChecksPassed(){
         $isSuccessful = true;
         if(!StileroTTServerRequirementHelper::hasCurlSupport()) {
-            throw new Exception('Server Missing Curl support.'); 
+            throw new Exception('TwitterTweet: Server Missing Curl support.'); 
             $isSuccessful = false;
         }
         if(!StileroTTServerRequirementHelper::hasFileGetSupport()){
-            throw new Exception('Server Missing Support for file_get_contents');
+            throw new Exception('TwitterTweet: Server Missing Support for file_get_contents');
             $isSuccessful = false;
         } 
         if(!$this->_Article->isPublished) {
@@ -105,11 +105,13 @@ class StileroTTShareCheck{
         }
         if( (!$this->_isOverridingDelayCheck) || (!$this->_isBackend) ){
             if( $this->_Table->isTooEarly($this->_minBetweenPosts) ) {
-                throw new Exception('Sharing too early');
+                $message = JText::_(plgSystemTwittertweet::LANG_PREFIX.'TOO_EARLY');
+                StileroTTMessageHelper::show($message, StileroTTMessageHelper::TYPE_NOTICE);
                 $isSuccessful = false;
             }
             if( $this->_Table->isLogged($this->_Article->id) ){
-                throw new Exception('Already shared');
+                $message = JText::_(plgSystemTwittertweet::LANG_PREFIX.'DUPLICATE_TWEET');
+                StileroTTMessageHelper::show($message, StileroTTMessageHelper::TYPE_NOTICE);
                 $isSuccessful = false;
             }
         }

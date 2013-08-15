@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/18/trunk/twittertweetsql
+END
+plg_twittertweet_uninstall.sql
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/17/trunk/twittertweetsql/plg_twittertweet_uninstall.sql
+END
+index.html
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/18/trunk/twittertweetsql/index.html
+END
+plg_twittertweet_install.sql
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/17/trunk/twittertweetsql/plg_twittertweet_install.sql
+END

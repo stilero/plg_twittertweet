@@ -1,8 +1,8 @@
 <?php
 /**
- * Description of twittertweet
+ * Joomla Plugin TwitterTweet. Updates your twitter status.
  *
- * @version 2.10
+ * @version 2.11
  * @author danieleliasson Stilero AB - http://www.stilero.com
  * @copyright 2011-dec-31 Stilero AB
  * @license	GPLv2
@@ -10,37 +10,10 @@
 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
-define('TT_LIBRARY', dirname(__FILE__).DS.'library'.DS);
-define('TT_HELPERS', dirname(__FILE__).DS.'helpers'.DS);
 
 // Import library dependencies
 jimport('joomla.plugin.plugin');
-//Include Libraries
-JLoader::register('StileroTTOauthClient', TT_LIBRARY.'oauth-client.php');
-JLoader::register('StileroTTOauthUser', TT_LIBRARY.'oauth-user.php');
-JLoader::register('StileroTTOauthCommunicator', TT_LIBRARY.'oauth-communicator.php');
-JLoader::register('StileroTTOauthServer', TT_LIBRARY.'oauth-server.php');
-JLoader::register('StileroTTShareTable', TT_LIBRARY.'stileroTTShareTable.php');
-JLoader::register('StileroTTShareCheck', TT_LIBRARY.'stileroTTShareCheck.php');
-JLoader::register('StileroTTTweets', TT_LIBRARY.'twitter-tweets.php');
-JLoader::register('StileroTTJArticle', TT_LIBRARY.'stileroTTJArticle.php');
-JLoader::register('StileroTTTwitterResponse', TT_LIBRARY.'stileroTTTwitterResponse.php');
-JLoader::register('OauthHelper', TT_LIBRARY.'oauth-helper.php');
-JLoader::register('OauthSignature', TT_LIBRARY.'oauth-signature.php');
-JLoader::register('OauthHeader', TT_LIBRARY.'oauth-header.php');
-//Include Helpers
-JLoader::register('StileroTTArticleHelper', TT_HELPERS.'stileroTTArticleHelper.php');
-JLoader::register('StileroTTCategoryHelper', TT_HELPERS.'stileroTTCategoryHelper.php');
-JLoader::register('StileroTTDBTableHelper', TT_HELPERS.'stileroTTDBTableHelper.php');
-JLoader::register('StileroTTExtensionHelper', TT_HELPERS.'stileroTTExtensionHelper.php');
-JLoader::register('StileroTTJArticleImageHelper', TT_HELPERS.'stileroTTJArticleImageHelper.php');
-JLoader::register('StileroTTJVersionHelper', TT_HELPERS.'stileroTTJVersionHelper.php');
-JLoader::register('StileroTTSH404SEFUrlHelper', TT_HELPERS.'stileroTTSH404SEFUrlHelper.php');
-JLoader::register('StileroTTServerRequirementHelper', TT_HELPERS.'stileroTTServerRequirementHelper.php');
-JLoader::register('StileroTTTagsHelper', TT_HELPERS.'stileroTTTagsHelper.php');
-JLoader::register('StileroTTTinyUrlHelper', TT_HELPERS.'stileroTTTinyUrlHelper.php');
-JLoader::register('StileroTTTweetHelper', TT_HELPERS.'stileroTTTweetHelper.php');
-JLoader::register('StileroTTUrlHelper', TT_HELPERS.'stileroTTUrlHelper.php');
+JLoader::register('StileroTTHelper', dirname(__FILE__).DS.'helper.php');
 
 class plgSystemTwittertweet extends JPlugin {
     protected $_OauthClient;
@@ -54,8 +27,10 @@ class plgSystemTwittertweet extends JPlugin {
     protected $_catList;
     protected $_allwaysPostOnSave;
     protected $_defaultTag;
+    protected $_isBackend;
     
     const TABLE_NAME = '#__twittertweet_tweeted';
+    const LANG_PREFIX = 'PLG_SYSTEM_TWITTERTWEET_';
 
     public function plgSystemTwittertweet( &$subject, $config ) {
         parent::__construct( $subject, $config );
@@ -77,6 +52,7 @@ class plgSystemTwittertweet extends JPlugin {
         $oauthClientSecret = $this->params->def('oauth_consumer_secret');
         $accessToken = $this->params->def('oauth_user_key');
         $tokenSecret = $this->params->def('oauth_user_secret');
+        StileroTTHelper::importDependencies();
         $this->_OauthClient = new StileroTTOauthClient($oauthClientKey, $oauthClientSecret);
         $this->_OauthUser = new StileroTTOauthUser($accessToken, $tokenSecret);
         $this->_Tweet = new StileroTTTweets($this->_OauthClient, $this->_OauthUser);
@@ -96,71 +72,72 @@ class plgSystemTwittertweet extends JPlugin {
     }
     
     /**
+     * Displays a Joomla message in backend.
+     * @param string $message The message to display
+     * @param string $type The type of message
+     */
+    protected function _showMessage($message, $type='message'){
+        if($this->_isBackend){
+            StileroTTMessageHelper::show($message, $type);
+        }
+    }
+    
+    /**
      * Prepares and sends a tweet. Displays messages after tweeting.
      * @param Object $article Joomla article Object
      */
     protected function _sendTweet($article){
-        $app = JFactory::getApplication();
         $this->_initializePosting(true, $article);
-        if($this->_ShareCheck->hasFullChecksPassed()){
-            $message = StileroTTTweetHelper::buildTweet($this->_Article->getArticleObj(), 5, $this->_defaultTag);
-            $response = $this->_Tweet->update($message);
-            $TwitterResponse = new StileroTTTwitterResponse($response);
-            if($TwitterResponse->hasID()){
-                $app->enqueueMessage('Tweeted Successfully: '.$message);
-            }else if($TwitterResponse->hasError()){
-                $message = 'TwitterError: ('.$TwitterResponse->errorCode.') '.$TwitterResponse->errorMsg;
-                $app->enqueueMessage($message, 'error');
+        $Article = $this->_Article->getArticleObj();
+        $hasChecksPassed = $this->_ShareCheck->hasFullChecksPassed();
+        $isInLog = $this->_Table->isLogged($Article->id);
+        if(!$isInLog || !$this->_allwaysPostOnSave){
+            if($hasChecksPassed && !$isInLog){
+                $status = StileroTTTweetHelper::buildTweet($Article, 5, $this->_defaultTag);
+                $response = $this->_Tweet->update($status);
+                $TwitterResponse = new StileroTTTwitterResponse($response);
+                if($TwitterResponse->hasID()){
+                    $message = JText::_(self::LANG_PREFIX.'SUCCESS').$status;
+                    $this->_showMessage($message);
+                    $this->_Table->saveLog($Article->id, $Article->catid, $Article->url, $Article->lang);
+                }else if($TwitterResponse->hasError()){
+                    $message = JText::_(self::LANG_PREFIX.'ERROR').'('.$TwitterResponse->errorCode.') '.$TwitterResponse->errorMsg;
+                    $this->_showMessage($message, StileroTTMessageHelper::TYPE_ERROR);
+                }else{
+                    $message = JText::_(self::LANG_PREFIX.'UNKNOWN_ERROR');
+                    $this->_showMessage($message, StileroTTMessageHelper::TYPE_ERROR);
+                }
             }else{
-                $app->enqueueMessage('Unknown error', 'error');
+                $message = JText::_(self::LANG_PREFIX.'FAILED_CHECKS');
+                //$this->_showMessage($message, StileroTTMessageHelper::TYPE_ERROR);
             }
-        }else{
-            $messageType = 'message';
-            $message = 'Failed Checks';
+        }else {
+            $message = JText::_(self::LANG_PREFIX.'DUPLICATE_TWEET');
+            $this->_showMessage($message, StileroTTMessageHelper::TYPE_NOTICE);
         }
     }
     
- 
+    /**
+     * Method called after saving an article
+     * @param string $context
+     * @param Object $article
+     * @param boolean $isNew
+     */
     public function onContentAfterSave($context, &$article, $isNew) {
+        $this->_isBackend = true;
         $this->_sendTweet($article);
         return;
     }
-
-
-    function onContentAfterDisplay( $article, & $params, $limitstart) {
+    
+    /**
+     * Method called after an article is displayed
+     * @param string $context
+     * @param Object $article
+     * @param boolean $isNew
+     */
+    function onContentAfterDisplay($context, $article, $params, $limitstart = 0) {
+        $this->_isBackend = false;
         $this->_sendTweet($article);
         return;
     }
-        
-
-
-//    private function doInitialChecks() {
-//        $this->CheckClass->isServerSupportingRequiredFunctions();
-//        $this->CheckClass->isServerSafeModeDisabled();
-//        if ( $this->config['useOauth'] ){
-//            $this->CheckClass->isOauthDetailsEntered();
-//        }else{
-//            $this->CheckClass->isLoginDetailsEntered();
-//        }
-//        $this->CheckClass->isArticleObjectIncluded();
-//        $this->CheckClass->isItemActive();
-//        $this->CheckClass->isItemPublished();
-//        $this->CheckClass->isItemNewEnough();
-//        $this->CheckClass->isItemPublic();
-//        $this->CheckClass->isCategoryToShare();
-//        $this->CheckClass->prepareTables();
-//        $allwaysPostOnSave = $this->config['postOnSave'];
-//        if(!$allwaysPostOnSave || !$this->inBackend){
-//            $this->CheckClass->isSharingToEarly();
-//            $this->CheckClass->isItemAlreadyShared();
-//        }
-////        if ( !$this->config['postOnSave'] && !$this->inBackend){
-////        }
-//        return $this->CheckClass->error;
-//    }
-
-
-}
-
-//End Plugin Class
-
+}//End Plugin Class

@@ -21,11 +21,11 @@
     </uninstall>	
     <files>
         <filename>index.html</filename>
+        <filename>helper.php</filename>
         <filename plugin="twittertweet">twittertweet.php</filename>
-        <folder>twittertweetclasses</folder>
         <folder>helpers</folder>
         <folder>library</folder>
-        <folder>twittertweetsql</folder>
+        <folder>sql</folder>
     </files>
     <languages folder="language">
         <language tag="en-GB">en-GB.plg_system_twittertweet.ini</language>

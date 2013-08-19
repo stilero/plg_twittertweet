@@ -2,7 +2,7 @@
 /**
  * Tweet Helper class, builds tweets ready for take off.
  *
- * @version  1.0
+ * @version  1.1
  * @package Stilero
  * @subpackage plg_twittertweet
  * @author Daniel Eliasson <daniel at stilero.com>
@@ -23,9 +23,13 @@ class StileroTTTweetHelper{
      * @param string $defaultTag A default tag to use
      * @return string Full Tweet
      */
-    public static function buildTweet($Article, $numTags=5, $defaultTag=''){
+    public static function buildTweet($Article, $numTags=5, $defaultTag='', $useMetaTags = true){
         $title = $Article->title;
-        $hashtagString = StileroTTTagsHelper::hashTagString($Article->tags, $numTags, $defaultTag);
+        $metaTags = '';
+        if($useMetaTags){
+            $metaTags = $Article->tags;
+        }
+        $hashtagString = StileroTTTagsHelper::hashTagString($metaTags, $numTags, $defaultTag);
         $articleSlug = StileroTTArticleHelper::slugFromId($Article->id);
         $categorySlug = StileroTTCategoryHelper::slugFromId($Article->catid);
         if(StileroTTExtensionHelper::isInstalled('com_sh404sef')){

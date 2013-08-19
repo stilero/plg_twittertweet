@@ -2,7 +2,7 @@
 /**
  * Joomla Plugin TwitterTweet. Updates your twitter status.
  *
- * @version 2.11
+ * @version 2.12
  * @author danieleliasson Stilero AB - http://www.stilero.com
  * @copyright 2011-dec-31 Stilero AB
  * @license	GPLv2
@@ -28,6 +28,7 @@ class plgSystemTwittertweet extends JPlugin {
     protected $_allwaysPostOnSave;
     protected $_defaultTag;
     protected $_isBackend;
+    protected $_useMetaAsHash;
     
     const TABLE_NAME = '#__twittertweet_tweeted';
     const LANG_PREFIX = 'PLG_SYSTEM_TWITTERTWEET_';
@@ -42,6 +43,7 @@ class plgSystemTwittertweet extends JPlugin {
         $this->_catList = $this->params->def('section_id');
         $this->_allwaysPostOnSave = $this->params->def('post_on_save');
         $this->_defaultTag = $this->params->def('default_hash');
+        $this->_useMetaAsHash = $this->params->def('metahash');
     }
     
     /**
@@ -93,7 +95,7 @@ class plgSystemTwittertweet extends JPlugin {
         $isInLog = $this->_Table->isLogged($Article->id);
         if(!$isInLog || !$this->_allwaysPostOnSave){
             if($hasChecksPassed && !$isInLog){
-                $status = StileroTTTweetHelper::buildTweet($Article, 5, $this->_defaultTag);
+                $status = StileroTTTweetHelper::buildTweet($Article, 5, $this->_defaultTag, $this->_useMetaAsHash);
                 $response = $this->_Tweet->update($status);
                 $TwitterResponse = new StileroTTTwitterResponse($response);
                 if($TwitterResponse->hasID()){

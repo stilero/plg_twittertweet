@@ -103,15 +103,19 @@ class StileroTTShareCheck{
         if(!$this->_Table->isTableFound()){
             $this->_Table->createTable();
         }
-        if( (!$this->_isOverridingDelayCheck) || (!$this->_isBackend) ){
+        if( (!$this->_isOverridingDelayCheck)){
             if( $this->_Table->isTooEarly($this->_minBetweenPosts) ) {
                 $message = JText::_(plgSystemTwittertweet::LANG_PREFIX.'TOO_EARLY');
-                StileroTTMessageHelper::show($message, StileroTTMessageHelper::TYPE_NOTICE);
+                if($this->_isBackend){
+                    StileroTTMessageHelper::show($message, StileroTTMessageHelper::TYPE_NOTICE);
+                }
                 $isSuccessful = false;
             }
             if( $this->_Table->isLogged($this->_Article->id) ){
                 $message = JText::_(plgSystemTwittertweet::LANG_PREFIX.'DUPLICATE_TWEET');
-                StileroTTMessageHelper::show($message, StileroTTMessageHelper::TYPE_NOTICE);
+                if($this->_isBackend){
+                    StileroTTMessageHelper::show($message, StileroTTMessageHelper::TYPE_NOTICE);
+                }
                 $isSuccessful = false;
             }
         }

@@ -71,16 +71,6 @@
                     description="PLG_SYSTEM_TWITTERTWEET_POST_ITEMSNEWER_DESC" 
                     format="%Y-%m-%d" 
                 />
-                <field 
-                    name="post_on_save" 
-                    type="radio" 
-                    default="0" 
-                    label="PLG_SYSTEM_TWITTERTWEET_OVERRIDE_DELAY" 
-                    description="PLG_SYSTEM_TWITTERTWEET_OVERRIDE_DELAY_DESC"
-                >
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </field>
             </fieldset>
             <fieldset 
                 name="oauth" 
@@ -132,6 +122,16 @@
                     label="PLG_SYSTEM_TWITTERTWEET_DELAY" 
                     description="PLG_SYSTEM_TWITTERTWEET_DELAY_DESC"
                 />
+                <field 
+                    name="post_on_save" 
+                    type="radio" 
+                    default="0" 
+                    label="PLG_SYSTEM_TWITTERTWEET_OVERRIDE_DELAY" 
+                    description="PLG_SYSTEM_TWITTERTWEET_OVERRIDE_DELAY_DESC"
+                >
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </field>
                 <field 
                     name="pingmessages" 
                     type="radio" 

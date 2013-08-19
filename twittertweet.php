@@ -66,10 +66,10 @@ class plgSystemTwittertweet extends JPlugin {
      * @param boolean $inBackend True if posted from backend
      * @param Object $article Joomla article Object
      */
-    protected function _initializePosting($inBackend, $article){
+    protected function _initializePosting($article){
         $this->_initializeClasses();
         $this->_Article = new StileroTTJArticle($article);
-        $this->_ShareCheck = new StileroTTShareCheck($this->_Article->getArticleObj(), $this->_Table, $this->_minutesBetweenPosts, $this->_dateLimit, $this->_catList, $this->_allwaysPostOnSave, $inBackend);
+        $this->_ShareCheck = new StileroTTShareCheck($this->_Article->getArticleObj(), $this->_Table, $this->_minutesBetweenPosts, $this->_dateLimit, $this->_catList, $this->_allwaysPostOnSave, $this->_isBackend);
         
     }
     
@@ -89,7 +89,7 @@ class plgSystemTwittertweet extends JPlugin {
      * @param Object $article Joomla article Object
      */
     protected function _sendTweet($article){
-        $this->_initializePosting(true, $article);
+        $this->_initializePosting($article);
         $Article = $this->_Article->getArticleObj();
         $hasChecksPassed = $this->_ShareCheck->hasFullChecksPassed();
         $isInLog = $this->_Table->isLogged($Article->id);
@@ -139,6 +139,7 @@ class plgSystemTwittertweet extends JPlugin {
      */
     function onContentAfterDisplay($context, $article, $params, $limitstart = 0) {
         $this->_isBackend = false;
+        $this->_showMessage($context);
         $this->_sendTweet($article);
         return;
     }

@@ -48,20 +48,6 @@
                     description="PLG_SYSTEM_TWITTERTWEET_PARAMSECTIDDESC"
                 />
                 <field 
-                    name="username" 
-                    type="hidden"  
-                    default="" 
-                    label="PLG_SYSTEM_TWITTERTWEET_USERNAME" 
-                    description="PLG_SYSTEM_TWITTERTWEET_USERNAME_DESC"
-                />
-                <field 
-                    name="password" 
-                    type="hidden" 
-                    default="" 
-                    label="PLG_SYSTEM_TWITTERTWEET_PASSWORD" 
-                    description="PLG_SYSTEM_TWITTERTWEET_PASSWORD_DESC"
-                />
-                <field 
                     name="metahash" 
                     type="radio" 
                     default="1" 
@@ -89,8 +75,8 @@
                     name="post_on_save" 
                     type="radio" 
                     default="0" 
-                    label="PLG_SYSTEM_TWITTERTWEET_POSTONSAVE" 
-                    description="PLG_SYSTEM_TWITTERTWEET_POSTONSAVE_DESC"
+                    label="PLG_SYSTEM_TWITTERTWEET_OVERRIDE_DELAY" 
+                    description="PLG_SYSTEM_TWITTERTWEET_OVERRIDE_DELAY_DESC"
                 >
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -100,16 +86,6 @@
                 name="oauth" 
                 label="PLG_SYSTEM_TWITTERTWEET_OAUTHSETTINGS"
             >
-                <field 
-                    name="oauth_enabled" 
-                    type="radio" 
-                    default="1" 
-                    label="PLG_SYSTEM_TWITTERTWEET_OAUTH_ENABLED" 
-                    description="PLG_SYSTEM_TWITTERTWEET_OAUTH_ENABLED_DESC"
-                >
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </field>
                 <field 
                     name="myspacer" 
                     type="spacer" 

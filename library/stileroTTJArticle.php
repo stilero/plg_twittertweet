@@ -34,6 +34,7 @@ class StileroTTJArticle {
         $tempClass->jVersion = StileroTTJVersionHelper::jVersion();
         $tempClass->category_title = $this->categoryTitle($article);
         $tempClass->description = $this->description($article);
+        $tempClass->published = $this->published($article);
         $tempClass->isPublished = $this->isPublished($article);
         $tempClass->isPublic = $this->isPublic($article);
         $tempClass->image = $this->image($article);
@@ -66,6 +67,17 @@ class StileroTTJArticle {
             $category_title = isset($article->category_title) ? $article->category_title : '';
         }
         return $category_title;
+    }
+    
+    public function published($article){
+        $published = FALSE;
+        if(isset($article->state)){
+            $published = $article->state;
+        }
+        if(isset($article->published)){
+            $published = $article->published;
+        }
+        return $published;
     }
     
     /**
@@ -132,8 +144,8 @@ class StileroTTJArticle {
     public function isPublished($article){
         if(JDEBUG) JFactory::getApplication()->enqueueMessage( var_dump($article));
         $isPublState = false;
-        if(isset($article->state)){
-            $isPublState = $article->state == '1' ? true : false;
+        if(isset($article->published)){
+            $isPublState = $article->published == '1' ? true : false;
         }
         
         if(!$isPublState){

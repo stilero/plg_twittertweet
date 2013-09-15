@@ -55,5 +55,6 @@ class StileroTTHelper{
         JLoader::register('StileroTTUrlHelper', TT_HELPERS.'stileroTTUrlHelper.php');
         JLoader::register('StileroTTK2UrlHelper', TT_HELPERS.'stileroTTUrlHelper.php');
         JLoader::register('StileroTTMessageHelper', TT_HELPERS.'stileroTTMessageHelper.php');
+        JLoader::register('StileroTTContextHelper', TT_HELPERS.'stileroTTContextHelper.php');
     }
 }

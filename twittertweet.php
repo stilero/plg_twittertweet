@@ -41,14 +41,15 @@ class plgContentTwittertweet extends JPlugin {
     public function plgContentTwittertweet( &$subject, $config ) {
         parent::__construct( $subject, $config );
         $language = JFactory::getLanguage();
-        $language->load('plg_system_twittertweet', JPATH_ADMINISTRATOR, 'en-GB', true);
-        $language->load('plg_system_twittertweet', JPATH_ADMINISTRATOR, null, true);
+        $language->load('plg_content_twittertweet', JPATH_ADMINISTRATOR, 'en-GB', true);
+        $language->load('plg_content_twittertweet', JPATH_ADMINISTRATOR, null, true);
         $this->_minutesBetweenPosts = $this->params->def('delay');
         $this->_dateLimit = $this->params->def('items_newer_than');
         $this->_catList = $this->params->def('section_id');
         $this->_allwaysPostOnSave = $this->params->def('post_on_save');
         $this->_defaultTag = $this->params->def('default_hash');
         $this->_useMetaAsHash = $this->params->def('metahash');
+        StileroTTHelper::importDependencies();
     }
     
     /**
@@ -59,7 +60,6 @@ class plgContentTwittertweet extends JPlugin {
         $oauthClientSecret = $this->params->def('oauth_consumer_secret');
         $accessToken = $this->params->def('oauth_user_key');
         $tokenSecret = $this->params->def('oauth_user_secret');
-        StileroTTHelper::importDependencies();
         $this->_OauthClient = new StileroTTOauthClient($oauthClientKey, $oauthClientSecret);
         $this->_OauthUser = new StileroTTOauthUser($accessToken, $tokenSecret);
         $this->_Tweet = new StileroTTTweets($this->_OauthClient, $this->_OauthUser);
@@ -77,8 +77,6 @@ class plgContentTwittertweet extends JPlugin {
             $this->_Article = new StileroTTJArticle($article);
         }else{
             $this->_Article = new StileroTTK2Article($article);
-            $art = $this->_Article->getArticleObj();
-            var_dump($art);exit;
         }
         $this->_ShareCheck = new StileroTTShareCheck($this->_Article->getArticleObj(), $this->_Table, $this->_minutesBetweenPosts, $this->_dateLimit, $this->_catList, $this->_allwaysPostOnSave, $this->_isBackend);
         
@@ -137,15 +135,13 @@ class plgContentTwittertweet extends JPlugin {
      * @param boolean $isNew
      */
     public function onContentAfterSave($context, $article, $isNew) {
-        if($context == 'com_k2.item'){
-            $this->_isK2 = TRUE;
-            
-        }
         $this->_isBackend = true;
-        if($context=='com_content.article' || $context=='com_k2.item'){
+        if($context == StileroTTContextHelper::K2_ITEM){
+            $this->_isK2 = TRUE;
+        }
+        if(StileroTTContextHelper::isArticle($context)){
             $this->_sendTweet($article);
         }
-        
         //return;
     }
     
@@ -157,22 +153,14 @@ class plgContentTwittertweet extends JPlugin {
     * @param integer $limitstart The current page number (starting at 0).
     * @return string The content to display after the article (or other primary content).
     */
-    public function onContentAfterDisplay($context, stdClass $article, JRegistry $params, $limitstart = 0){
+    public function onContentAfterDisplay($context, $article, $params, $limitstart = 0){
         $this->_isBackend = false;
-        $this->_showMessage($context);
-        $this->_sendTweet($article);
+        if($context == StileroTTContextHelper::K2_ITEM){
+            $this->_isK2 = TRUE;
+        }
+        if(StileroTTContextHelper::isArticle($context)){
+            $this->_sendTweet($article);
+        }
         //return;
-    }
-    
-    /**
-     * Event fired after a K2 item is saved in backend
-     * @param stdClass $row
-     * @param bool $isNew
-     */
-    function onAfterK2Save(&$row,$isNew){
-        print "ok";exit;
-        $this->_isK2 = TRUE;
-        $this->_isBackend = true;
-        $this->_sendTweet($row);
     }
 }//End Plugin Class

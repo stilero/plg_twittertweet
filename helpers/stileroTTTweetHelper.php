@@ -30,6 +30,7 @@ class StileroTTTweetHelper{
             $metaTags = $Article->tags;
         }
         $hashtagString = StileroTTTagsHelper::hashTagString($metaTags, $numTags, $defaultTag);
+        /*
         $articleSlug = StileroTTArticleHelper::slugFromId($Article->id);
         $categorySlug = StileroTTCategoryHelper::slugFromId($Article->id);
         if(JVERSION){
@@ -46,7 +47,8 @@ class StileroTTTweetHelper{
         }else{
             $url = StileroTTUrlHelper::sefURL($articleSlug, $categorySlug);
         }
-        $tinyUrl = StileroTTTinyUrlHelper::tinyUrl($url);
+        */
+        $tinyUrl = StileroTTTinyUrlHelper::tinyUrl($Article->url);
         $tweet = $title.' '.$tinyUrl.' '.$hashtagString;
         return $tweet;
     }

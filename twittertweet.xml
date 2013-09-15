@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="2.5" type="plugin" group="system" method="upgrade">
-    <name>System - TwitterTweet</name>
+<extension version="2.5" type="plugin" group="content" method="upgrade">
+    <name>Content - TwitterTweet</name>
     <author>Daniel Eliasson (www.stilero.com)</author>
     <creationDate>December 31st, 2011</creationDate>
     <copyright>Copyright (c) 2011 Stilero AB. All rights reserved.</copyright>
@@ -11,12 +11,12 @@
     <description>This plugin automatically Tweets your articles to Twitter. If you like this plugin, show your love and write a review at http://extensions.joomla.org</description>
     <install>
     <sql>
-        <file driver="mysql" charset="utf8">twittertweetsql/plg_twittertweet_install.sql</file>
+        <file driver="mysql" charset="utf8">sql/plg_twittertweet_install.sql</file>
     </sql>
     </install>
     <uninstall>
         <sql>
-            <file driver="mysql" charset="utf8">twittertweetsql/plg_twittertweet_uninstall.sql</file>
+            <file driver="mysql" charset="utf8">sql/plg_twittertweet_uninstall.sql</file>
         </sql>
     </uninstall>	
     <files>
@@ -28,31 +28,31 @@
         <folder>sql</folder>
     </files>
     <languages folder="language">
-        <language tag="en-GB">en-GB.plg_system_twittertweet.ini</language>
-        <language tag="sv-SE">sv-SE.plg_system_twittertweet.ini</language>
-        <language tag="en-GB">en-GB.plg_system_twittertweet.sys.ini</language>
-        <language tag="sv-SE">sv-SE.plg_system_twittertweet.sys.ini</language>
+        <language tag="en-GB">en-GB.plg_content_twittertweet.ini</language>
+        <language tag="sv-SE">sv-SE.plg_content_twittertweet.ini</language>
+        <language tag="en-GB">en-GB.plg_content_twittertweet.sys.ini</language>
+        <language tag="sv-SE">sv-SE.plg_content_twittertweet.sys.ini</language>
     </languages>
     <!-- Standard plugin parameters for Joomla! 2.5+ -->
     <config>
         <fields name="params">
             <fieldset 
                 name="settings" 
-                label="PLG_SYSTEM_TWITTERTWEET_SETTINGS"
+                label="PLG_CONTENT_TWITTERTWEET_SETTINGS"
             >
                 <field 
                     name="section_id" 
                     type="text"  
                     default="" 
-                    label="PLG_SYSTEM_TWITTERTWEET_PARAMSECTID" 
-                    description="PLG_SYSTEM_TWITTERTWEET_PARAMSECTIDDESC"
+                    label="PLG_CONTENT_TWITTERTWEET_PARAMSECTID" 
+                    description="PLG_CONTENT_TWITTERTWEET_PARAMSECTIDDESC"
                 />
                 <field 
                     name="metahash" 
                     type="radio" 
                     default="1" 
-                    label="PLG_SYSTEM_TWITTERTWEET_METAHASH" 
-                    description="PLG_SYSTEM_TWITTERTWEET_METAHASH_DESC"
+                    label="PLG_CONTENT_TWITTERTWEET_METAHASH" 
+                    description="PLG_CONTENT_TWITTERTWEET_METAHASH_DESC"
                 >
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -61,73 +61,73 @@
                     name="default_hash" 
                     type="text"  
                     default="" 
-                    label="PLG_SYSTEM_TWITTERTWEET_DEFAULTHASH" 
-                    description="PLG_SYSTEM_TWITTERTWEET_DEFAULTHASH_DESC"
+                    label="PLG_CONTENT_TWITTERTWEET_DEFAULTHASH" 
+                    description="PLG_CONTENT_TWITTERTWEET_DEFAULTHASH_DESC"
                 />
                 <field 
                     name="items_newer_than" 
                     type="calendar" 
-                    label="PLG_SYSTEM_TWITTERTWEET_POST_ITEMSNEWER" 
-                    description="PLG_SYSTEM_TWITTERTWEET_POST_ITEMSNEWER_DESC" 
+                    label="PLG_CONTENT_TWITTERTWEET_POST_ITEMSNEWER" 
+                    description="PLG_CONTENT_TWITTERTWEET_POST_ITEMSNEWER_DESC" 
                     format="%Y-%m-%d" 
                 />
             </fieldset>
             <fieldset 
                 name="oauth" 
-                label="PLG_SYSTEM_TWITTERTWEET_OAUTHSETTINGS"
+                label="PLG_CONTENT_TWITTERTWEET_OAUTHSETTINGS"
             >
                 <field 
                     name="myspacer" 
                     type="spacer" 
-                    label="PLG_SYSTEM_TWITTERTWEET_CREATE_APPLICATION" 
+                    label="PLG_CONTENT_TWITTERTWEET_CREATE_APPLICATION" 
                     class="test" 
                 />
                 <field 
                     name="oauth_consumer_key" 
                     type="password"  
                     default="" 
-                    label="PLG_SYSTEM_TWITTERTWEET_OAUTH_CONSUMER_KEY" 
-                    description="PLG_SYSTEM_TWITTERTWEET_OAUTH_CONSUMER_KEY_DESC"
+                    label="PLG_CONTENT_TWITTERTWEET_OAUTH_CONSUMER_KEY" 
+                    description="PLG_CONTENT_TWITTERTWEET_OAUTH_CONSUMER_KEY_DESC"
                 />
                 <field 
                     name="oauth_consumer_secret" 
                     type="password"  
                     default="" 
-                    label="PLG_SYSTEM_TWITTERTWEET_OAUTH_CONSUMER_SECRET" 
-                    description="PLG_SYSTEM_TWITTERTWEET_OAUTH_CONSUMER_SECRET_DESC"
+                    label="PLG_CONTENT_TWITTERTWEET_OAUTH_CONSUMER_SECRET" 
+                    description="PLG_CONTENT_TWITTERTWEET_OAUTH_CONSUMER_SECRET_DESC"
                 />
                 <field 
                     name="oauth_user_key" 
                     type="password"  
                     default="" 
-                    label="PLG_SYSTEM_TWITTERTWEET_OAUTH_USER_KEY" 
-                    description="PLG_SYSTEM_TWITTERTWEET_OAUTH_USER_KEY_DESC"
+                    label="PLG_CONTENT_TWITTERTWEET_OAUTH_USER_KEY" 
+                    description="PLG_CONTENT_TWITTERTWEET_OAUTH_USER_KEY_DESC"
                 />
                 <field 
                     name="oauth_user_secret" 
                     type="password"  
                     default="" 
-                    label="PLG_SYSTEM_TWITTERTWEET_OAUTH_USER_SECRET" 
-                    description="PLG_SYSTEM_TWITTERTWEET_OAUTH_USER_SECRET_DESC"
+                    label="PLG_CONTENT_TWITTERTWEET_OAUTH_USER_SECRET" 
+                    description="PLG_CONTENT_TWITTERTWEET_OAUTH_USER_SECRET_DESC"
                 />
             </fieldset>
             <fieldset 
                 name="advanced" 
-                label="PLG_SYSTEM_TWITTERTWEET_ADVSETTINGS"
+                label="PLG_CONTENT_TWITTERTWEET_ADVSETTINGS"
             >
                 <field 
                     name="delay" 
                     type="text"  
                     default="15" 
-                    label="PLG_SYSTEM_TWITTERTWEET_DELAY" 
-                    description="PLG_SYSTEM_TWITTERTWEET_DELAY_DESC"
+                    label="PLG_CONTENT_TWITTERTWEET_DELAY" 
+                    description="PLG_CONTENT_TWITTERTWEET_DELAY_DESC"
                 />
                 <field 
                     name="post_on_save" 
                     type="radio" 
                     default="0" 
-                    label="PLG_SYSTEM_TWITTERTWEET_OVERRIDE_DELAY" 
-                    description="PLG_SYSTEM_TWITTERTWEET_OVERRIDE_DELAY_DESC"
+                    label="PLG_CONTENT_TWITTERTWEET_OVERRIDE_DELAY" 
+                    description="PLG_CONTENT_TWITTERTWEET_OVERRIDE_DELAY_DESC"
                 >
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -136,8 +136,8 @@
                     name="pingmessages" 
                     type="radio" 
                     default="1" 
-                    label="PLG_SYSTEM_TWITTERTWEET_PARAMPINGMESSAGES" 
-                    description="PLG_SYSTEM_TWITTERTWEET_PARAMPINGMESSAGESDESC"
+                    label="PLG_CONTENT_TWITTERTWEET_PARAMPINGMESSAGES" 
+                    description="PLG_CONTENT_TWITTERTWEET_PARAMPINGMESSAGESDESC"
                 >
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -147,10 +147,10 @@
     </config>
     <administration>
         <languages folder="language">
-           <language tag="en-GB">en-GB.plg_system_twittertweet.ini</language>
-           <language tag="sv-SE">sv-SE.plg_system_twittertweet.ini</language>
-           <language tag="en-GB">en-GB.plg_system_twittertweet.sys.ini</language>
-           <language tag="sv-SE">sv-SE.plg_system_twittertweet.sys.ini</language>
+           <language tag="en-GB">en-GB.plg_content_twittertweet.ini</language>
+           <language tag="sv-SE">sv-SE.plg_content_twittertweet.ini</language>
+           <language tag="en-GB">en-GB.plg_content_twittertweet.sys.ini</language>
+           <language tag="sv-SE">sv-SE.plg_content_twittertweet.sys.ini</language>
         </languages>
     </administration>
 </extension>

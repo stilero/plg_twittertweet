@@ -31,8 +31,17 @@ class StileroTTTweetHelper{
         }
         $hashtagString = StileroTTTagsHelper::hashTagString($metaTags, $numTags, $defaultTag);
         $articleSlug = StileroTTArticleHelper::slugFromId($Article->id);
-        $categorySlug = StileroTTCategoryHelper::slugFromId($Article->catid);
-        if(StileroTTExtensionHelper::isInstalled('com_sh404sef')){
+        $categorySlug = StileroTTCategoryHelper::slugFromId($Article->id);
+        if(JVERSION){
+            $newUrl = ContentHelperRoute::getArticleRoute($Article->id.':'.$Article->alias, $Article->catid);
+            // better will be check if SEF option is enable!
+            $router = new JRouterSite(array('mode'=>JROUTER_MODE_SEF));
+            $newUrl = $router->build($newUrl)->toString(array('path', 'query', 'fragment'));
+            // SEF URL !
+            $newUrl = str_replace('/administrator/', '', $newUrl);
+            //and now the tidying, as Joomlas JRoute makes a cockup of the urls.
+            $url = str_replace('component/content/article/', '', $newUrl);
+        }else if(StileroTTExtensionHelper::isInstalled('com_sh404sef')){
             $url = StileroTTSH404SEFUrlHelper::sefURL($articleSlug, $categorySlug);
         }else{
             $url = StileroTTUrlHelper::sefURL($articleSlug, $categorySlug);

@@ -105,14 +105,14 @@ class StileroTTShareCheck{
         }
         if( (!$this->_isOverridingDelayCheck)){
             if( $this->_Table->isTooEarly($this->_minBetweenPosts) ) {
-                $message = JText::_(plgSystemTwittertweet::LANG_PREFIX.'TOO_EARLY');
+                $message = JText::_(plgContentTwittertweet::LANG_PREFIX.'TOO_EARLY');
                 if($this->_isBackend){
                     StileroTTMessageHelper::show($message, StileroTTMessageHelper::TYPE_NOTICE);
                 }
                 $isSuccessful = false;
             }
             if( $this->_Table->isLogged($this->_Article->id) ){
-                $message = JText::_(plgSystemTwittertweet::LANG_PREFIX.'DUPLICATE_TWEET');
+                $message = JText::_(plgContentTwittertweet::LANG_PREFIX.'DUPLICATE_TWEET');
                 if($this->_isBackend){
                     StileroTTMessageHelper::show($message, StileroTTMessageHelper::TYPE_NOTICE);
                 }

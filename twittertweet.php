@@ -10,12 +10,16 @@
 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
+if(!defined('DS')){
+    define('DS',DIRECTORY_SEPARATOR);
+}
 
 // Import library dependencies
-jimport('joomla.plugin.plugin');
+//jimport('joomla.plugin.plugin');
+jimport('joomla.event.plugin');
 JLoader::register('StileroTTHelper', dirname(__FILE__).DS.'helper.php');
 
-class plgSystemTwittertweet extends JPlugin {
+class plgContentTwittertweet extends JPlugin {
     protected $_OauthClient;
     protected $_OauthUser;
     protected $_Tweet;
@@ -29,11 +33,12 @@ class plgSystemTwittertweet extends JPlugin {
     protected $_defaultTag;
     protected $_isBackend;
     protected $_useMetaAsHash;
+    protected $_isK2 = false;
     
     const TABLE_NAME = '#__twittertweet_tweeted';
-    const LANG_PREFIX = 'PLG_SYSTEM_TWITTERTWEET_';
+    const LANG_PREFIX = 'PLG_CONTENT_TWITTERTWEET_';
 
-    public function plgSystemTwittertweet( &$subject, $config ) {
+    public function plgContentTwittertweet( &$subject, $config ) {
         parent::__construct( $subject, $config );
         $language = JFactory::getLanguage();
         $language->load('plg_system_twittertweet', JPATH_ADMINISTRATOR, 'en-GB', true);
@@ -68,7 +73,13 @@ class plgSystemTwittertweet extends JPlugin {
      */
     protected function _initializePosting($article){
         $this->_initializeClasses();
-        $this->_Article = new StileroTTJArticle($article);
+        if(!$this->_isK2){
+            $this->_Article = new StileroTTJArticle($article);
+        }else{
+            $this->_Article = new StileroTTK2Article($article);
+            $art = $this->_Article->getArticleObj();
+            var_dump($art);exit;
+        }
         $this->_ShareCheck = new StileroTTShareCheck($this->_Article->getArticleObj(), $this->_Table, $this->_minutesBetweenPosts, $this->_dateLimit, $this->_catList, $this->_allwaysPostOnSave, $this->_isBackend);
         
     }
@@ -125,22 +136,43 @@ class plgSystemTwittertweet extends JPlugin {
      * @param Object $article
      * @param boolean $isNew
      */
-    public function onContentAfterSave($context, &$article, $isNew) {
+    public function onContentAfterSave($context, $article, $isNew) {
+        if($context == 'com_k2.item'){
+            $this->_isK2 = TRUE;
+            
+        }
         $this->_isBackend = true;
-        $this->_sendTweet($article);
-        return;
+        if($context=='com_content.article' || $context=='com_k2.item'){
+            $this->_sendTweet($article);
+        }
+        
+        //return;
     }
     
     /**
-     * Method called after an article is displayed
-     * @param string $context
-     * @param Object $article
-     * @param boolean $isNew
-     */
-    function onContentAfterDisplay($context, $article, $params, $limitstart = 0) {
+    * 
+    * @param string $context The context of the content being passed to the plugin.
+    * @param stdClass $article The article that is being rendered by the view.
+    * @param JRegistry $params A JRegistry object of merged article and menu item params.
+    * @param integer $limitstart The current page number (starting at 0).
+    * @return string The content to display after the article (or other primary content).
+    */
+    public function onContentAfterDisplay($context, stdClass $article, JRegistry $params, $limitstart = 0){
         $this->_isBackend = false;
         $this->_showMessage($context);
         $this->_sendTweet($article);
-        return;
+        //return;
+    }
+    
+    /**
+     * Event fired after a K2 item is saved in backend
+     * @param stdClass $row
+     * @param bool $isNew
+     */
+    function onAfterK2Save(&$row,$isNew){
+        print "ok";exit;
+        $this->_isK2 = TRUE;
+        $this->_isBackend = true;
+        $this->_sendTweet($row);
     }
 }//End Plugin Class

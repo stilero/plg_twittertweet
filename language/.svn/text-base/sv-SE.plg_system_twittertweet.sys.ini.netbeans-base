@@ -1,4 +1,4 @@
-; $Id: sv-SE.plg_system_twittertweet.sys.ini 23 2012-06-30 05:59:39Z webbochsant@gmail.com $
+; $Id: sv-SE.plg_system_twittertweet.sys.ini 21 2012-06-20 12:42:46Z webbochsant@gmail.com $
 ; Copyright (C) 2010 Stilero.com, All rights reserved.
 ; License http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
 ;
@@ -32,8 +32,6 @@ PLG_SYSTEM_TWITTERTWEET_PARAMPINGMESSAGES="Visa debug-information?"
 PLG_SYSTEM_TWITTERTWEET_PARAMPINGMESSAGESDESC="Är du nyfiken på vad som händer under motorhuven? Slå på denna inställning för att se eventuella felmeddelanden."
 PLG_SYSTEM_TWITTERTWEET_METAHASH="Meta-tag som Hash-tag?"
 PLG_SYSTEM_TWITTERTWEET_METAHASH_DESC="Vill du använda artikelns meta-taggar som hash-taggar på Twitter?"
-PLG_SYSTEM_TWITTERTWEET_DEFAULTHASH="Förvald Hashtag"
-PLG_SYSTEM_TWITTERTWEET_DEFAULTHASH_DESC="Förvald hashtag till dina tweets. Denna tag kommer att komplementera dina vanliga tags. Ange tag utan # till exempel: mintag"
 PLG_SYSTEM_TWITTERTWEET_DELAY="Fördröjning mellan tweets"
 PLG_SYSTEM_TWITTERTWEET_DELAY_DESC="Ange fördröjning i minuter. Vi rekommenderar 15 minuter, vilket då innebär att TwitterTweet väntar 15 minuter innan ny tweet skickas. Sätt aldrig denna inställning på noll, eftersom du då riskerar att spärras från Twitter."
 PLG_SYSTEM_TWITTERTWEET_POST_ITEMSNEWER="Skicka artiklar nyare än:"

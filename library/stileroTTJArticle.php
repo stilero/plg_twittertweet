@@ -36,13 +36,13 @@ class StileroTTJArticle {
         $tempClass->description = $this->description($article);
         $tempClass->isPublished = $this->isPublished($article);
         $tempClass->isPublic = $this->isPublic($article);
-        $tempClass->image = StileroTTJArticleImageHelper::image($article);
-        $tempClass->firstContentImage = StileroTTJArticleImageHelper::firstImageInContent($article);
-        $tempClass->introImage = StileroTTJArticleImageHelper::imageFromTextType($article, StileroTTJArticleImageHelper::IMAGE_TYPE_INTRO);
-        $tempClass->fullTextImage = StileroTTJArticleImageHelper::imageFromTextType($article, StileroTTJArticleImageHelper::IMAGE_TYPE_FULL);
-        $tempClass->imageArray = StileroTTJArticleImageHelper::imagesInContent($article);
+        $tempClass->image = $this->image($article);
+        $tempClass->firstContentImage = $this->firstContentImage($article);
+        $tempClass->introImage = $this->introImage($article);
+        $tempClass->fullTextImage = $this->fullTextImage($article);
+        $tempClass->imageArray = $this->images($article);
         $tempClass->url = $this->url($article);
-        $tempClass->tags = StileroTTTagsHelper::tags($article->metakey);
+        $tempClass->tags = $this->tags($article);
         $this->Article = $tempClass;
     }
     
@@ -131,7 +131,11 @@ class StileroTTJArticle {
      */
     public function isPublished($article){
         if(JDEBUG) JFactory::getApplication()->enqueueMessage( var_dump($article));
-        $isPublState = $article->state == '1' ? true : false;
+        $isPublState = false;
+        if(isset($article->state)){
+            $isPublState = $article->state == '1' ? true : false;
+        }
+        
         if(!$isPublState){
             return FALSE;
         }
@@ -151,6 +155,10 @@ class StileroTTJArticle {
         }
     }
     
+    /**
+     * Checks if the article is native article
+     * @return boolean true if article
+     */
     public function isArticle(){
         $hasID = isset($this->Article->id) ? TRUE : FALSE;
         $hasTitle = isset($this->Article->title) ? TRUE : FALSE;
@@ -158,6 +166,117 @@ class StileroTTJArticle {
             return TRUE;
         }
         return FALSE;
+    }
+    
+    /**
+     * Returns the image from the article
+     * @param stdClass $Article
+     * @return string image url
+     */
+    protected function image($Article){
+        return StileroTTJArticleImageHelper::image($Article);
+    }
+
+    /**
+     * Returns the first image extracted from the content
+     * @param stdClass $Article
+     * @return string image url
+     */
+    protected function firstContentImage($Article){
+        return StileroTTJArticleImageHelper::firstImageInContent($Article);
+    }
+    
+    /**
+     * Returns an image used as intro image
+     * @param stdClass $Article
+     * @return string image url
+     */
+    protected function introImage($Article){
+        return StileroTTJArticleImageHelper::imageFromTextType($Article, StileroTTJArticleImageHelper::IMAGE_TYPE_INTRO);
+    }
+    
+    /**
+     * Returns an image from the article full text
+     * @param stdClass $Article
+     * @return string image url
+     */
+    protected function fullTextImage($Article){
+        return StileroTTJArticleImageHelper::imageFromTextType($Article, StileroTTJArticleImageHelper::IMAGE_TYPE_FULL);
+    }
+    
+    /**
+     * Returns an array with all images found in article
+     * @param stdClass $Article
+     * @return Array images urls
+     */
+    protected function images($Article){
+        return StileroTTJArticleImageHelper::imagesInContent($Article);
+    }
+    
+    /**
+     * Returns an array with tags extracted from meta tags
+     * @param stdClass $Article
+     * @return Array tags
+     */
+    protected function tags($Article){
+        return StileroTTTagsHelper::tags($Article->metakey);
+    }
+}
+
+class StileroTTK2Article extends StileroTTJArticle {
+
+    public function __construct($article) {
+        parent::__construct($article);
+    }
+    
+    /**
+     * Extracts and returns the category title
+     * @param stdClass $article Joomla article object
+     * @return string Category title
+     */
+    public function categoryTitle($article){
+        $category_title = '';
+        if(isset($article->category->name)){
+            $category_title = $article->category->name;
+        }
+        return $category_title;
+    }
+    
+    /**
+     * Returns the intro image from the article
+     * @param \stdClass $Article
+     * @return string image url
+     */
+    protected function introImage($Article) {
+        return StileroTTK2ImageHelper::introImage($Article);
+    }
+    
+    /**
+     * Returns the first image from the article text
+     * @param \stdClass $Article
+     * @return string image url
+     */
+    protected function fullTextImage($Article) {
+        return StileroTTK2ImageHelper::fullTextImage($Article);
+    }
+    
+    /**
+     * Returns an array with all images found in the article
+     * @param \stdClass $Article
+     * @return Array image urls
+     */
+    protected function images($Article) {
+        return StileroTTK2ImageHelper::imagesInContent($Article);        
+    }
+
+
+    /**
+     * Returns the article URL
+     * @param stdClass $Article
+     * @return string full article url
+     */
+    public function url($Article) {
+        return StileroTTK2UrlHelper::sefURL($Article);
     }
 
 }

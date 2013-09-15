@@ -122,3 +122,83 @@ class StileroTTJArticleImageHelper{
         return $image;
     }
 }
+
+/**
+ * Class for extracting images from K2 items
+ */
+class StileroTTK2ImageHelper extends StileroTTJArticleImageHelper{
+    
+    /**
+     * Returns the image url from a K2 item
+     * @param stdClass $Article
+     * @return string Image url
+     */
+    public static function introImage($Article){
+        $imageUrl = '';
+        if(isset($Article->imageMedium)){
+            $imageUrl = $Article->imageMedium;
+        }
+        if($imageUrl=='' && isset($Article->imageLarge)){
+            $imageUrl = $Article->imageLarge;
+        }
+        if($imageUrl=='' && isset($Article->imageXLarge)){
+            $imageUrl = $Article->imageXLarge;
+        }
+        if($imageUrl=='' && isset($Article->imageSmall)){
+            $imageUrl = $Article->imageSmall;
+        }
+        if($imageUrl=='' && isset($Article->imageXSmall)){
+            $imageUrl = $Article->imageXSmall;
+        }
+        $parsedRootUrl = parse_url(JURI::root());
+        $parsedImageURL = '';
+        if( $imageUrl != '' ){
+            $parsedImageURL = str_replace($parsedRootUrl['path'], '', $imageUrl);
+        }
+        return $parsedImageURL;
+    }
+    
+    /**
+     * Extracts all images found from content
+     * @param string $textContent Article HTML
+     * @return Array array with images from content
+     */
+    public static function contentImages($textContent){
+        if( ($textContent == '') || (!class_exists('DOMDocument')) ){
+            return;
+        }
+        $html = new DOMDocument();
+        $html->recover = true;
+        $html->strictErrorChecking = false;
+        $html->loadHTML($textContent);
+        $images = array();
+        foreach($html->getElementsByTagName('img') as $image) {
+            $images[] = array(
+                'src' => $image->getAttribute('src'),
+                'class' => $image->getAttribute('class'),
+            );
+        }
+        return $images;
+    }
+    
+    /**
+     * Returns first image found in content
+     * @param stdClass $Article
+     * @return string image url
+     */
+    public static function fullTextImage($Article){
+        $fullText = '';
+        $contentImages = array();
+        if(isset($Article->fulltext)){
+            $fullText = $Article->fulltext;
+            $contentImages = self::contentImages($fullText);
+
+        }
+        if(empty($contentImages)){
+            return;
+        }
+        $firstContentImage = $contentImages[0]['src'];
+        return $firstContentImage;
+    }
+    
+}

@@ -34,6 +34,7 @@ class StileroTTHelper{
         JLoader::register('StileroTTShareCheck', TT_LIBRARY.'stileroTTShareCheck.php');
         JLoader::register('StileroTTTweets', TT_LIBRARY.'twitter-tweets.php');
         JLoader::register('StileroTTJArticle', TT_LIBRARY.'stileroTTJArticle.php');
+        JLoader::register('StileroTTK2Article', TT_LIBRARY.'stileroTTJArticle.php');
         JLoader::register('StileroTTTwitterResponse', TT_LIBRARY.'stileroTTTwitterResponse.php');
         JLoader::register('OauthHelper', TT_LIBRARY.'oauth-helper.php');
         JLoader::register('OauthSignature', TT_LIBRARY.'oauth-signature.php');
@@ -44,6 +45,7 @@ class StileroTTHelper{
         JLoader::register('StileroTTDBTableHelper', TT_HELPERS.'stileroTTDBTableHelper.php');
         JLoader::register('StileroTTExtensionHelper', TT_HELPERS.'stileroTTExtensionHelper.php');
         JLoader::register('StileroTTJArticleImageHelper', TT_HELPERS.'stileroTTJArticleImageHelper.php');
+        JLoader::register('StileroTTK2ImageHelper', TT_HELPERS.'stileroTTJArticleImageHelper.php');
         JLoader::register('StileroTTJVersionHelper', TT_HELPERS.'stileroTTJVersionHelper.php');
         JLoader::register('StileroTTSH404SEFUrlHelper', TT_HELPERS.'stileroTTSH404SEFUrlHelper.php');
         JLoader::register('StileroTTServerRequirementHelper', TT_HELPERS.'stileroTTServerRequirementHelper.php');
@@ -51,6 +53,7 @@ class StileroTTHelper{
         JLoader::register('StileroTTTinyUrlHelper', TT_HELPERS.'stileroTTTinyUrlHelper.php');
         JLoader::register('StileroTTTweetHelper', TT_HELPERS.'stileroTTTweetHelper.php');
         JLoader::register('StileroTTUrlHelper', TT_HELPERS.'stileroTTUrlHelper.php');
+        JLoader::register('StileroTTK2UrlHelper', TT_HELPERS.'stileroTTUrlHelper.php');
         JLoader::register('StileroTTMessageHelper', TT_HELPERS.'stileroTTMessageHelper.php');
     }
 }

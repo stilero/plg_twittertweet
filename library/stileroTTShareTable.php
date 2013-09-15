@@ -84,7 +84,7 @@ class StileroTTShareTable{
         $data->article_id = (int)$id;
         $data->cat_id = (int)$catid;
         $data->articlelink = $url;
-        $data->date = $date->toMySQL();
+        $data->date = $date->toSql(true);
         //$data->date = date("Y-m-d H:i:s");
         $data->language = $lang;
         $db = &JFactory::getDbo();
@@ -125,7 +125,7 @@ class StileroTTShareTable{
         $query = $db->getQuery(true);
         $query->select('id');
         $query->from($this->_table);
-        $query->where("date > SUBTIME('".$date->toMySQL()."','0 0:".$minutesBetweenPosts.":0.0')");
+        $query->where("date > SUBTIME('".$date->toSql(true)."','0 0:".$minutesBetweenPosts.":0.0')");
         $db->setQuery($query);
         $result = $db->loadObject();
         if($result){

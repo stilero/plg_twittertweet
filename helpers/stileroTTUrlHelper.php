@@ -41,3 +41,29 @@ class StileroTTUrlHelper{
         return $sefURL;
     }    
 }
+
+class StileroTTK2UrlHelper{
+    
+    /**
+     * Returns the url of the article
+     * @param stdClass $Article
+     * @param string $categorySlug
+     * @return string full url
+     */
+    public static function sefURL($Article){
+        $articleID = '';
+        $catSlug = '';
+        if(isset($Article->id) && (isset($Article->alias))){
+            $articleID = '&id='.$Article->id.':'.$Article->alias;
+        }
+        if(isset($Article->catslug)){
+            $catSlug = '&catid='.$Article->catslug;
+        }
+        $routedUrl = JRoute::_( 'index.php?option=com_k2&view=item' . $catSlug . $articleID);
+        $sanitizedUrl = str_replace('/administrator', '', $routedUrl);
+        $parsedRootURL = parse_url(JURI::root());
+        $host = str_replace("/administrator", "", $parsedRootURL['host']);
+        $fullUrl = preg_match('/http/', $sanitizedUrl)? $sanitizedUrl :  $parsedRootURL['scheme'].'://'.$host. $sanitizedUrl;
+        return $fullUrl;
+    }
+}

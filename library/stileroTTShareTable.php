@@ -40,6 +40,7 @@ class StileroTTShareTable{
                     `article_id` int(11) NOT NULL default 0,
                     `cat_id` int(11) NOT NULL default 0,
                     `articlelink` varchar(255) NOT NULL default '',
+                    `component` varchar(255) NOT NULL default '',
                     `date` datetime NOT NULL default '0000-00-00 00:00:00',
                     `language` char(7) NOT NULL default '',
                     PRIMARY KEY  (`id`)
@@ -77,13 +78,14 @@ class StileroTTShareTable{
      * @param string $url Article/Item url
      * @param string $lang Language code string
      */
-    public function saveLog($id, $catid, $url, $lang='*') {
+    public function saveLog($id, $catid, $url, $lang='*', $component='') {
         $date=JFactory::getDate();
         $data =new stdClass();
         $data->id = null;
         $data->article_id = (int)$id;
         $data->cat_id = (int)$catid;
         $data->articlelink = $url;
+        $data->component = $component;
         $data->date = $date->toSql(true);
         //$data->date = date("Y-m-d H:i:s");
         $data->language = $lang;
@@ -96,12 +98,13 @@ class StileroTTShareTable{
      * @param int $id Article id
      * @return boolean True if found
      */
-    public function isLogged($id){
+    public function isLogged($id, $component){
         $db = JFactory::getDbo();
         $query = $db->getQuery(true);
         $query->select('id');
         $query->from($this->_table);
         $query->where('article_id='.(int)$id);
+        $query->where('component='.$db->quote($component));
         $db->setQuery($query);
         $result = $db->loadObject();
         if($result){

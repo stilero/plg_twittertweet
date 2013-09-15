@@ -101,7 +101,7 @@ class plgContentTwittertweet extends JPlugin {
         $this->_initializePosting($article);
         $Article = $this->_Article->getArticleObj();
         $hasChecksPassed = $this->_ShareCheck->hasFullChecksPassed();
-        $isInLog = $this->_Table->isLogged($Article->id);
+        $isInLog = $this->_Table->isLogged($Article->id, $Article->component);
         if(!$isInLog || !$this->_allwaysPostOnSave){
             if($hasChecksPassed && !$isInLog){
                 $status = StileroTTTweetHelper::buildTweet($Article, 5, $this->_defaultTag, $this->_useMetaAsHash);
@@ -110,7 +110,7 @@ class plgContentTwittertweet extends JPlugin {
                 if($TwitterResponse->hasID()){
                     $message = JText::_(self::LANG_PREFIX.'SUCCESS').$status;
                     $this->_showMessage($message);
-                    $this->_Table->saveLog($Article->id, $Article->catid, $Article->url, $Article->lang);
+                    $this->_Table->saveLog($Article->id, $Article->catid, $Article->url, $Article->lang, $Article->component);
                 }else if($TwitterResponse->hasError()){
                     $message = JText::_(self::LANG_PREFIX.'ERROR').'('.$TwitterResponse->errorCode.') '.$TwitterResponse->errorMsg;
                     $this->_showMessage($message, StileroTTMessageHelper::TYPE_ERROR);

@@ -34,7 +34,6 @@ class StileroTTJArticle {
         $tempClass->jVersion = StileroTTJVersionHelper::jVersion();
         $tempClass->category_title = $this->categoryTitle($article);
         $tempClass->description = $this->description($article);
-        $tempClass->published = $this->published($article);
         $tempClass->isPublished = $this->isPublished($article);
         $tempClass->isPublic = $this->isPublic($article);
         $tempClass->image = $this->image($article);
@@ -44,6 +43,7 @@ class StileroTTJArticle {
         $tempClass->imageArray = $this->images($article);
         $tempClass->url = $this->url($article);
         $tempClass->tags = $this->tags($article);
+        $tempClass->component = JRequest::getCmd('option');
         $this->Article = $tempClass;
     }
     
@@ -68,18 +68,7 @@ class StileroTTJArticle {
         }
         return $category_title;
     }
-    
-    public function published($article){
-        $published = FALSE;
-        if(isset($article->state)){
-            $published = $article->state;
-        }
-        if(isset($article->published)){
-            $published = $article->published;
-        }
-        return $published;
-    }
-    
+        
     /**
      * Returns a description from either text, introtext or metadesc
      * @param Object $article Article object
@@ -144,20 +133,19 @@ class StileroTTJArticle {
     public function isPublished($article){
         if(JDEBUG) JFactory::getApplication()->enqueueMessage( var_dump($article));
         $isPublState = false;
-        if(isset($article->published)){
-            $isPublState = $article->published == '1' ? true : false;
+        if(isset($article->state)){
+            $isPublState = $article->state;
         }
-        
         if(!$isPublState){
             return FALSE;
         }
         $publishUp = isset($article->publish_up) ? $article->publish_up : '';
         $publishDown = isset($article->publish_down) ? $article->publish_down : '';
         if($publishUp == '' ){
-            return false;
+            return TRUE;
         }
         $date = JFactory::getDate();
-        $currentDate = $date->toSql();
+        $currentDate = $date->toSql(TRUE);
         if ( ($publishUp > $currentDate) ){
             return FALSE;
         }else if($publishDown < $currentDate && $publishDown != '0000-00-00 00:00:00' && $publishDown!=""){
@@ -289,6 +277,36 @@ class StileroTTK2Article extends StileroTTJArticle {
      */
     public function url($Article) {
         return StileroTTK2UrlHelper::sefURL($Article);
+    }
+    
+    /**
+     * Checks if an article is published
+     * @param Object $article Article object
+     * @return boolean True if published
+     */
+    public function isPublished($article){
+        if(JDEBUG) JFactory::getApplication()->enqueueMessage( var_dump($article));
+        $isPublState = false;
+        if(isset($article->published)){
+            $isPublState = $article->published;
+        }
+        if(!$isPublState){
+            return FALSE;
+        }
+        $publishUp = isset($article->publish_up) ? $article->publish_up : '';
+        $publishDown = isset($article->publish_down) ? $article->publish_down : '';
+        if($publishUp == '' ){
+            return TRUE;
+        }
+        $date = JFactory::getDate();
+        $currentDate = $date->toSql(TRUE);
+        if ( ($publishUp > $currentDate) ){
+            return FALSE;
+        }else if($publishDown < $currentDate && $publishDown != '0000-00-00 00:00:00' && $publishDown!=""){
+            return FALSE;
+        }else {
+            return TRUE;
+        }
     }
 
 }

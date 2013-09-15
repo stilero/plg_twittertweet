@@ -25,6 +25,13 @@ class StileroTTUrlHelper{
      * @return string SefURL - Search Engine Friendly URL
      */
     public static function sefURL($articleSlug, $categorySlug){
+        if(StileroTTJVersionHelper::isJoomla30()){
+            $sefUrl = JRoute::_('index.php?view=article&id='.$articleSlug, FALSE);
+            $sefUrlNoAdmin = str_replace('/administrator', '', $sefUrl);
+            $parsedUrl = parse_url(JUri::root());
+            $fullUrl = $parsedUrl['scheme'].'://'.$parsedUrl['host'].$sefUrlNoAdmin;
+            return $fullUrl;
+        }
         require_once(JPATH_SITE.DS.'components'.DS.'com_content'.DS.'helpers'.DS.'route.php');
         $siteURL = substr(JURI::root(), 0, -1);
         if(JPATH_BASE == JPATH_ADMINISTRATOR) {

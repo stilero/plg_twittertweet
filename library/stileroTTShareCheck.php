@@ -111,7 +111,7 @@ class StileroTTShareCheck{
                 }
                 $isSuccessful = false;
             }
-            if( $this->_Table->isLogged($this->_Article->id) ){
+            if( $this->_Table->isLogged($this->_Article->id, $this->_Article->component) ){
                 $message = JText::_(plgContentTwittertweet::LANG_PREFIX.'DUPLICATE_TWEET');
                 if($this->_isBackend){
                     StileroTTMessageHelper::show($message, StileroTTMessageHelper::TYPE_NOTICE);

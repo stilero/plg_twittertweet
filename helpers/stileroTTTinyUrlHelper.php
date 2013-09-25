@@ -30,7 +30,7 @@ class StileroTTTinyUrlHelper{
         $apiCallForTinyURL = self::API_URL_TINY_URL.$encodedFullURL;
         $tinyURL = @file_get_contents($apiCallForTinyURL);
         if($tinyURL == ""){
-            $tinyURL = $this->getTinyUrlUsinCurl();
+            $tinyURL = self::tinyUrlUsinCurl($fullURL);
         }
         $tinyUrlLength = strlen($tinyURL);
         $fullUrlLength = strlen($fullURL);
